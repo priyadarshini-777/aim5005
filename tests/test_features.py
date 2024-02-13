@@ -51,7 +51,9 @@ class TestFeatures(TestCase):
         data = [[0, 0], [0, 0], [1, 1], [1, 1]]
         expected = np.array([[-1., -1.], [-1., -1.], [1., 1.], [1., 1.]])
         scaler.fit(data)
-        assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
+        result = scaler.transform(data)
+        self.assertTrue(np.array_equal(result, expected), "Scaler transform does not return expected values.")
+
         
     def test_standard_scaler_single_value(self):
         data = [[0, 0], [0, 0], [1, 1], [1, 1]]
@@ -61,7 +63,15 @@ class TestFeatures(TestCase):
         result = scaler.transform([[2., 2.]]) 
         assert (result == expected).all(), "Scaler transform does not return expected values. Expect {}. Got: {}".format(expected.reshape(1,-1), result.reshape(1,-1))
 
-    # TODO: Add a test of your own below this line
+    def test_standard_scaler_custom(self):
+        data = np.array([[1, 2], [3, 4], [5, 6]])
+        expected = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
+        scaler = StandardScaler()
+        scaler.fit(data)
+        result = scaler.transform(data)
+        self.assertTrue(np.allclose(result, expected), "StandardScaler did not properly standardize the data.")
     
+
+
 if __name__ == '__main__':
     unittest.main()
